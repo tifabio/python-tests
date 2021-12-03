@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css">
+
+    <!-- jQuery -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+
+    <script>
+        function renderShopCart() {
+            $.getJSON( "/cart", function( data ) {
+                products = $.map(data, function(product) {
+                    return `<li class="list-group-item d-flex justify-content-between align-items-center">
+                          1x ${product.title}
+                          <span class="badge badge-danger btn btn-remove" data-product-id="${product.id}">x</span>
+                        </li>`;
+                });
+                $( "#product-list" ).html( products.join('') );
+            });
+        }
+
+        $(function() {
+            $('.btn-buy').on('click', function() {
+                product_id = $(this).data('productId');
+                product = $(`#product-${product_id}`).data();
+                $.ajax({
+                    type: 'POST',
+                    url: '/cart/product',
+                    dataType: 'json',
+                    contentType: 'application/json; charset=utf-8',
+                    data: JSON.stringify(product),
+                    success: renderShopCart,
+                    error: function() {
+                        console.error('Deu ruim');
+                    }
+                });
+            });
+
+            $(document).on('click', '.btn-remove', function() {
+                product_id = $(this).data('productId');
+                $.ajax({
+                    type: 'DELETE',
+                    url: `/cart/product/${product_id}`,
+                    success: renderShopCart,
+                    error: function() {
+                        console.error('Deu ruim');
+                    }
+                });
+            });
+        });
+    </script>
+
+    <title>Shop Cart Selenium Test</title>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row">
+            <div class="col-sm-7 shadow">
+                <div class="p-2">Products</div>
+                <div class="card-columns">
+                    {% for product in products %}
+                    <input type="hidden" 
+                            id="product-{{ product.id }}"
+                            data-id="{{ product.id }}"
+                            data-title="{{ product.title }}"
+                            data-price="{{ product.price }}">
+                    <div class="card">
+                        <img class="card-img-top" src="https://via.placeholder.com/150">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ product.title }}</h5>
+                            <p class="card-text">$ {{ product.price }}</p>
+                            <a href="#" class="btn btn-primary btn-buy" data-product-id="{{ product.id }}">Buy</a>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-sm-1"></div>
+            <div class="col-sm-4 shadow">
+                <div class="p-2">Cart</div>
+                <div class="">
+                    <ul class="list-group" id="product-list">
+                    </ul>
+                </div>
+            </div>
+          </div>
+    </div>
+</body>
+</html>
