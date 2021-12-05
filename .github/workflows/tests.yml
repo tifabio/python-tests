@@ -1,0 +1,21 @@
+name: Tests
+
+on: [push]
+
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Update packages
+      run: sudo apt update
+    - name: Install Firefox with geckodriver
+      run: sudo apt install firefox-geckodriver -y
+    - name: Instal py.test
+      run: sudo apt install python3-pytest -y
+    - name: Install PIP
+      run: sudo apt install python3-pip -y
+    - name: Install dependencies
+      run: pip3 install -r requirements.txt
