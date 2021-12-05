@@ -20,6 +20,6 @@ jobs:
     - name: Install dependencies
       run: pip3 install -r requirements.txt
     - name: Start Flask
-      run: nohup python3 app.py > log.txt 2>&1 & 
+      run: nohup python3 app.py & 
     - name: Run Tests
       run: py.test-3 
