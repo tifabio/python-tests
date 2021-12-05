@@ -4,8 +4,8 @@ on: [push]
 
 
 jobs:
-  build:
-    name: Build
+  tests:
+    name: Tests
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -19,21 +19,7 @@ jobs:
       run: sudo apt install python3-pip -y
     - name: Install dependencies
       run: pip3 install -r requirements.txt
-
-  flask:
-    needs: build
-    name: Start Flask
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: Start Flask Webserver
-      run: python3 app.py
-
-  tests:
-    needs: flask
-    name: Run Tests
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v2
-    - name: Run all tests
-      run: py.test-3
+    - name: Start Flask
+      run: python3 app.py   
+    - name: Run Tests
+      run: py.test-3 
